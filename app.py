@@ -1,84 +1,50 @@
-import streamlit as st
-import requests
-import pandas as pd
-from nltk.sentiment import SentimentIntensityAnalyzer
-import yfinance as yf
-import matplotlib.pyplot as plt
-import nltk
+import random
+import time
 
-# Download the VADER lexicon file
-nltk.download('vader_lexicon')
+def generate_random_numbers():
+    quantity = random.randint(100, 999)  # Generate a random three-digit quantity
+    price = round(random.uniform(100, 999), 2)  # Generate a random three-digit price
+    return quantity, price
 
-# Set the API key for MediaStack
-api_key = "371a1750c4791037ce0a4d98b7bfd6b9"
+def play_game():
+    input("Press Enter to start timing...")  # Wait for user input to start timing
+    start_time = time.time()
 
-# Initialize SentimentIntensityAnalyzer
-sia = SentimentIntensityAnalyzer()
+    quantity, price = generate_random_numbers()
+    print(f"Random quantity: {quantity}")
+    print(f"Random price: {price}")
 
-# Streamlit App
-st.title("Algorithmic News Analysis App")
+    try:
+        entered_quantity = int(input("Enter quantity (3 digits): "))
+        entered_price = float(input("Enter price (3 digits): "))
+    except ValueError:
+        print("Invalid input. Please enter valid three-digit quantity and price.")
+        return
 
-# Sidebar for user input
-st.sidebar.header("User Input")
+    if not (100 <= entered_quantity <= 999) or not (100 <= entered_price <= 999):
+        print("Quantity and price must be three-digit numbers.")
+        return
 
-# User input for stock search (without .NS extension)
-stock_symbol = st.sidebar.text_input("Enter Stock Symbol (e.g., RELIANCE, TCS):").upper()
+    elapsed_time = time.time() - start_time
+    print(f"Time taken to enter both quantity and price is {elapsed_time:.2f} seconds.")
 
-if not stock_symbol:
-    st.warning("Please enter a stock symbol.")
-    st.stop()
+    total_cost = entered_quantity * entered_price
+    print(f"Total cost: {total_cost:.2f}")
 
-# Define Indian financial market and business news sources
-indian_news_sources = [
-    "moneycontrol.com",
-    "thehindubusinessline.com",
-    "livemint.com",
-    # Add more sources as needed
-]
+    return elapsed_time
 
-# MediaStack API endpoint for news from specific Indian sources without .NS extension
-news_url = f"http://api.mediastack.com/v1/news?access_key={api_key}&symbols={stock_symbol}&sources={','.join(indian_news_sources)}"
+def main():
+    total_time = 0
+    num_games = 10
 
-# Fetch news data from MediaStack
-response = requests.get(news_url)
-news_data = response.json()
+    for i in range(num_games):
+        print(f"Game {i + 1}:")
+        elapsed_time = play_game()
+        total_time += elapsed_time
+        print()
 
-# Display news headlines and perform sentiment analysis
-st.subheader(f"Latest News for {stock_symbol}")
-cumulative_sentiment = 0.0
+    average_time = total_time / num_games
+    print(f"Average time across {num_games} games: {average_time:.2f} seconds")
 
-for article in news_data['data']:
-    title = article['title']
-    st.write(f"- {title}")
-    
-    # Sentiment analysis for each article
-    sentiment_score = sia.polarity_scores(title)['compound']
-    cumulative_sentiment += sentiment_score
-
-    st.write(f"  - Sentiment Score: {sentiment_score:.2f}")
-
-# Display cumulative sentiment score
-st.subheader("Cumulative Sentiment Analysis")
-st.write(f"Cumulative Sentiment Score: {cumulative_sentiment:.2f}")
-
-# Evaluate undervalued/neutral/overvalued stock based on sentiment
-if cumulative_sentiment > 0.2:
-    st.success("Stock is Undervalued!")
-elif -0.2 <= cumulative_sentiment <= 0.2:
-    st.info("Stock is Neutral.")
-else:
-    st.error("Stock is Overvalued!")
-
-# Fetch stock data using yfinance
-stock_data = yf.download(stock_symbol, start="2023-02-04", end="2024-02-04", progress=False)
-
-# Plot stock price trend
-st.subheader(f"Stock Price Trend for {stock_symbol}")
-plt.figure(figsize=(10, 6))
-plt.plot(stock_data['Close'])
-plt.xlabel('Date')
-plt.ylabel('Closing Price (USD)')
-plt.title(f'Stock Price Trend for {stock_symbol}')
-st.pyplot(plt)
-
-# End of Streamlit App
+if __name__ == "__main__":
+    main()
