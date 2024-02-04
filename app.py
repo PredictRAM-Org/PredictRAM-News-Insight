@@ -1,8 +1,9 @@
 import streamlit as st
 import requests
 import pandas as pd
-import yfinance as yf
 from nltk.sentiment import SentimentIntensityAnalyzer
+import yfinance as yf
+import matplotlib.pyplot as plt
 
 # Set the API key for MediaStack
 api_key = "371a1750c4791037ce0a4d98b7bfd6b9"
@@ -33,7 +34,6 @@ news_data = response.json()
 # Display news headlines and perform sentiment analysis
 st.subheader(f"Latest News for {stock_symbol}")
 cumulative_sentiment = 0.0
-sentiment_scores = []
 
 for article in news_data['data']:
     title = article['title']
@@ -42,7 +42,6 @@ for article in news_data['data']:
     # Sentiment analysis for each article
     sentiment_score = sia.polarity_scores(title)['compound']
     cumulative_sentiment += sentiment_score
-    sentiment_scores.append(sentiment_score)
 
     st.write(f"  - Sentiment Score: {sentiment_score:.2f}")
 
@@ -58,16 +57,16 @@ elif -0.2 <= cumulative_sentiment <= 0.2:
 else:
     st.error("Stock is Overvalued!")
 
-# News Impact Analysis using yfinance
-st.header("News Impact Analysis")
+# Fetch stock data using yfinance
+stock_data = yf.download(stock_symbol, start="2023-02-04", end="2024-02-04", progress=False)
 
-# Fetch historical stock prices using yfinance
-stock_data = yf.download(stock_symbol, start="2023-01-01", end="2024-01-31")  # Replace with the actual date range
-
-# Plotting historical stock prices
-st.line_chart(stock_data['Close'], use_container_width=True)
-
-# Plotting sentiment scores over time
-st.line_chart(sentiment_scores, use_container_width=True)
+# Plot stock price trend
+st.subheader(f"Stock Price Trend for {stock_symbol}")
+plt.figure(figsize=(10, 6))
+plt.plot(stock_data['Close'])
+plt.xlabel('Date')
+plt.ylabel('Closing Price (USD)')
+plt.title(f'Stock Price Trend for {stock_symbol}')
+st.pyplot(plt)
 
 # End of Streamlit App
