@@ -2,6 +2,10 @@ import streamlit as st
 import requests
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+
+# Download the VADER lexicon file
+nltk.download('vader_lexicon')
 
 # Set the API key for MediaStack
 api_key = "371a1750c4791037ce0a4d98b7bfd6b9"
