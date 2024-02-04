@@ -1,10 +1,6 @@
 import streamlit as st
 import requests
-import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
-import yfinance as yf
-import matplotlib.pyplot as plt
-import nltk
 
 # Download the VADER lexicon file
 nltk.download('vader_lexicon')
@@ -21,14 +17,14 @@ st.title("Algorithmic News Analysis App")
 # Sidebar for user input
 st.sidebar.header("User Input")
 
-# User input for stock search
-stock_symbol = st.sidebar.text_input("Enter Stock Symbol (e.g., AAPL):").upper()
+# User input for stock search (without .NS extension)
+stock_symbol = st.sidebar.text_input("Enter Stock Symbol (e.g., RELIANCE, TCS):").upper()
 
 if not stock_symbol:
     st.warning("Please enter a stock symbol.")
     st.stop()
 
-# MediaStack API endpoint for news
+# MediaStack API endpoint for news without .NS extension
 news_url = f"http://api.mediastack.com/v1/news?access_key={api_key}&symbols={stock_symbol}"
 
 # Fetch news data from MediaStack
@@ -53,24 +49,12 @@ for article in news_data['data']:
 st.subheader("Cumulative Sentiment Analysis")
 st.write(f"Cumulative Sentiment Score: {cumulative_sentiment:.2f}")
 
-# Suggest trend based on sentiment and past stock price
+# Suggest trend based on sentiment
 if cumulative_sentiment > 0.2:
     st.success("Suggested Trend: Upward")
 elif -0.2 <= cumulative_sentiment <= 0.2:
     st.info("Suggested Trend: Neutral")
 else:
     st.error("Suggested Trend: Downward")
-
-# Fetch stock data using yfinance
-stock_data = yf.download(stock_symbol, start="2023-02-04", end="2024-02-04", progress=False)
-
-# Plot stock price trend
-st.subheader(f"Stock Price Trend for {stock_symbol}")
-plt.figure(figsize=(10, 6))
-plt.plot(stock_data['Close'])
-plt.xlabel('Date')
-plt.ylabel('Closing Price (USD)')
-plt.title(f'Stock Price Trend for {stock_symbol}')
-st.pyplot(plt)
 
 # End of Streamlit App
