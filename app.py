@@ -1,16 +1,20 @@
-import streamlit as st
+mport streamlit as st
 import subprocess
 import requests
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
-import spacy
 
-# Install spaCy and download the English model
+# Install spaCy if not already installed
 subprocess.run(["pip", "install", "spacy"])
-subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
 
-# Initialize spaCy English model
-nlp = spacy.load('en_core_web_sm')
+# Check if the 'en_core_web_sm' model is installed; if not, download it
+try:
+    import spacy
+    nlp = spacy.load('en_core_web_sm')
+except OSError:
+    st.warning("Downloading spaCy model. This may take some time.")
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    nlp = spacy.load('en_core_web_sm')
 
 # Set the API key for MediaStack
 api_key = "371a1750c4791037ce0a4d98b7bfd6b9"
