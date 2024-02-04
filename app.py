@@ -1,6 +1,10 @@
 import streamlit as st
 import requests
+import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
+import yfinance as yf
+import matplotlib.pyplot as plt
+import nltk
 
 # Download the VADER lexicon file
 nltk.download('vader_lexicon')
@@ -49,12 +53,24 @@ for article in news_data['data']:
 st.subheader("Cumulative Sentiment Analysis")
 st.write(f"Cumulative Sentiment Score: {cumulative_sentiment:.2f}")
 
-# Suggest trend based on sentiment
+# Evaluate undervalued/neutral/overvalued stock based on sentiment
 if cumulative_sentiment > 0.2:
-    st.success("Suggested Trend: Upward")
+    st.success("Stock is Undervalued!")
 elif -0.2 <= cumulative_sentiment <= 0.2:
-    st.info("Suggested Trend: Neutral")
+    st.info("Stock is Neutral.")
 else:
-    st.error("Suggested Trend: Downward")
+    st.error("Stock is Overvalued!")
+
+# Fetch stock data using yfinance
+stock_data = yf.download(stock_symbol, start="2023-02-04", end="2024-02-04", progress=False)
+
+# Plot stock price trend
+st.subheader(f"Stock Price Trend for {stock_symbol}")
+plt.figure(figsize=(10, 6))
+plt.plot(stock_data['Close'])
+plt.xlabel('Date')
+plt.ylabel('Closing Price (USD)')
+plt.title(f'Stock Price Trend for {stock_symbol}')
+st.pyplot(plt)
 
 # End of Streamlit App
