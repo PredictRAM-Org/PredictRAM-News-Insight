@@ -3,9 +3,14 @@ import requests
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
+import spacy
 
-# Download the VADER lexicon file
+# Download NLTK and spaCy models
 nltk.download('vader_lexicon')
+spacy.cli.download('en_core_web_sm')
+
+# Load spaCy English model
+nlp = spacy.load('en_core_web_sm')
 
 # Set the API key for MediaStack
 api_key = "371a1750c4791037ce0a4d98b7bfd6b9"
@@ -51,12 +56,39 @@ for article in news_data['data']:
 st.subheader("Cumulative Sentiment Analysis")
 st.write(f"Cumulative Sentiment Score: {cumulative_sentiment:.2f}")
 
-# Evaluate undervalued/neutral/overvalued stock
+# Evaluate undervalued/neutral/overvalued stock based on sentiment
 if cumulative_sentiment > 0.2:
     st.success("Stock is Undervalued!")
 elif -0.2 <= cumulative_sentiment <= 0.2:
     st.info("Stock is Neutral.")
 else:
     st.error("Stock is Overvalued!")
+
+# Financial Text Analysis - Company Performance Evaluation
+st.header("Company Performance Evaluation")
+
+# Fetch financial reports or documents for the stock (you may need to replace this with actual data source)
+financial_reports = []  # Replace with actual financial data
+
+# Extract financial information using spaCy
+financial_info = []
+
+for report in financial_reports:
+    doc = nlp(report)
+    
+    # Named Entity Recognition for financial entities
+    financial_entities = [ent.text for ent in doc.ents if ent.label_ in ['MONEY', 'PERCENT', 'DATE', 'ORG']]
+    
+    # Additional processing based on your requirements
+    
+    financial_info.extend(financial_entities)
+
+# Display extracted financial information
+st.subheader("Extracted Financial Information")
+for info in financial_info:
+    st.write(f"- {info}")
+
+# Textual Feature Engineering
+# You can add your own features based on keywords, sentiment analysis, and named entities
 
 # End of Streamlit App
