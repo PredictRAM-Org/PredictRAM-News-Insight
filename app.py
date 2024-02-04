@@ -28,8 +28,16 @@ if not stock_symbol:
     st.warning("Please enter a stock symbol.")
     st.stop()
 
-# MediaStack API endpoint for news without .NS extension
-news_url = f"http://api.mediastack.com/v1/news?access_key={api_key}&symbols={stock_symbol}"
+# Define Indian financial market and business news sources
+indian_news_sources = [
+    "moneycontrol.com",
+    "thehindubusinessline.com",
+    "livemint.com",
+    # Add more sources as needed
+]
+
+# MediaStack API endpoint for news from specific Indian sources without .NS extension
+news_url = f"http://api.mediastack.com/v1/news?access_key={api_key}&symbols={stock_symbol}&sources={','.join(indian_news_sources)}"
 
 # Fetch news data from MediaStack
 response = requests.get(news_url)
