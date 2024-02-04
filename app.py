@@ -4,6 +4,10 @@ import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
 import yfinance as yf
 import matplotlib.pyplot as plt
+import nltk
+
+# Download the VADER lexicon file
+nltk.download('vader_lexicon')
 
 # Set the API key for MediaStack
 api_key = "371a1750c4791037ce0a4d98b7bfd6b9"
