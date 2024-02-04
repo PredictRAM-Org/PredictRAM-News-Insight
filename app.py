@@ -53,13 +53,13 @@ for article in news_data['data']:
 st.subheader("Cumulative Sentiment Analysis")
 st.write(f"Cumulative Sentiment Score: {cumulative_sentiment:.2f}")
 
-# Evaluate undervalued/neutral/overvalued stock based on sentiment
+# Suggest trend based on sentiment and past stock price
 if cumulative_sentiment > 0.2:
-    st.success("Stock is Undervalued!")
+    st.success("Suggested Trend: Upward")
 elif -0.2 <= cumulative_sentiment <= 0.2:
-    st.info("Stock is Neutral.")
+    st.info("Suggested Trend: Neutral")
 else:
-    st.error("Stock is Overvalued!")
+    st.error("Suggested Trend: Downward")
 
 # Fetch stock data using yfinance
 stock_data = yf.download(stock_symbol, start="2023-02-04", end="2024-02-04", progress=False)
