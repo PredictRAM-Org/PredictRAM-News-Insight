@@ -3,13 +3,13 @@ import subprocess
 import requests
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
+import spacy
 
 # Install spaCy if not already installed
 subprocess.run(["pip", "install", "spacy"])
 
 # Check if the 'en_core_web_sm' model is installed; if not, download it
 try:
-    import spacy
     nlp = spacy.load('en_core_web_sm')
 except OSError:
     st.warning("Downloading spaCy model. This may take some time.")
