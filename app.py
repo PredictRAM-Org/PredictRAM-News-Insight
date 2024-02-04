@@ -22,14 +22,23 @@ st.title("Algorithmic News Analysis App")
 st.sidebar.header("User Input")
 
 # User input for stock search
-stock_symbol = st.sidebar.text_input("Enter Stock Symbol (e.g., AAPL):").upper()
+stock_symbol = st.sidebar.text_input("Enter Stock Symbol (e.g., RELIANCE, TCS):").upper()
 
 if not stock_symbol:
     st.warning("Please enter a stock symbol.")
     st.stop()
 
-# MediaStack API endpoint for news
-news_url = f"http://api.mediastack.com/v1/news?access_key={api_key}&symbols={stock_symbol}"
+# Define Indian business, economy, and market news sources
+indian_news_sources = [
+    "moneycontrol.com",
+    "thehindubusinessline.com",
+    "livemint.com",
+    "economictimes.indiatimes.com",
+    # Add more sources as needed
+]
+
+# MediaStack API endpoint for news from specific Indian sources
+news_url = f"http://api.mediastack.com/v1/news?access_key={api_key}&symbols={stock_symbol}&sources={','.join(indian_news_sources)}"
 
 # Fetch news data from MediaStack
 response = requests.get(news_url)
